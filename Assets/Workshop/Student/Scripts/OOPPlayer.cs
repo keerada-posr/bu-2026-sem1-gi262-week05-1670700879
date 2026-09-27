@@ -47,15 +47,15 @@ namespace Solution
             {
                 //stundent exercise: use FireStorm to attack 3 lower energy enemies on map
                 inventory.UseItem("FireStorm", 1);
-                OOPEnemy[] enemies = SortEnemiesByRemainningEnergy1();
-                int count = 3;
-                if (count > enemies.Length)
+                var sortedEnemies = SortEnemiesByRemainningEnergy2();
+                var count = 3;
+                if (count > sortedEnemies.Length)
                 {
-                    count = enemies.Length;
+                    count = sortedEnemies.Length;
                 }
                 for (int i = 0; i < count; i++)
                 {
-                    enemies[i].TakeDamage(10);
+                    sortedEnemies[i].TakeDamage(10);
                 }
             }
             else
@@ -68,15 +68,13 @@ namespace Solution
             var enemies = mapGenerator.GetEnemies();
             for (int i = 0; i < enemies.Length - 1; i++)
             {
-                int minIndex = i;
-                for (int j = i + 1; j < enemies.Length; j++)
+                for (int j = 0; j < enemies.Length - i - 1; j++)
                 {
-                    if (enemies[i].energy < enemies[minIndex].energy)
+                    if (enemies[j].energy > enemies[j + 1].energy)
                     {
-                        minIndex = j;
+                        (enemies[j], enemies[j + 1]) = (enemies[j + 1], enemies[j]);
                     }
                 }
-                (enemies[i], enemies[minIndex]) = (enemies[minIndex], enemies[i]);
             }
             //stundent exercise: sort enemies by remainning energy
 
@@ -102,7 +100,10 @@ namespace Solution
             //        return 0;
             //    }
             //});
-            Array.Sort(enemies, (a, b) => a.energy.CompareTo(b.energy));
+            Array.Sort(enemies, (a, b) =>
+            {
+                return a.energy.CompareTo(b.energy);
+            });
             return enemies;
         }
         public void Attack(OOPEnemy _enemy)
